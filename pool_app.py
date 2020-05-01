@@ -20,8 +20,14 @@ def pool_status_dict():
     "Return dict with current data for the pool."
     return {'temperature':
                 {'water': pooldata.temperature(pooldata.POOL_TEMP_SENSOR),
+                 'surface': pooldata.temperature(pooldata.SURFACE_TEMP_SENSOR),
                  'air': pooldata.temperature(pooldata.AIR_TEMP_SENSOR)},
+            'light': pooldata.light_intensity(),
             'pressure': pooldata.pressure(pooldata.FILTER_PRESSURE_CHANNEL),
+            'pump':
+                {'status': pooldata.pump_status(),
+                 'pressure': pooldata.pressure(pooldata.FILTER_PRESSURE_CHANNEL),
+                 'power': pooldata.powerconsumption(pooldata.POWER_CONSUMPTION_CHANNEL)},
             'relay':
                 {'pump': pooldata.pump_status()},
             'timestamp': '{:%d.%m.%Y %H:%M:%S}'.format(datetime.now())}
