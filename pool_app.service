@@ -1,0 +1,15 @@
+[Unit]
+Description=Pool Control Web App
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=3
+User=pi
+Environment="FLASK_APP=/home/pi/bin/pool_app.py"
+ExecStart=/usr/bin/flask run --host=0.0.0.0
+
+[Install]
+WantedBy=multi-user.target
