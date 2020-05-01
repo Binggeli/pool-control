@@ -51,7 +51,7 @@ def powerconsumption(channel):
     adc.start_adc(channel, gain=1)
     for i in range(POWER_CONSUMPTION_MEASUREMENTS):
         sum += abs(adc.get_last_result() - 13179.2)
-        sleep(0.5)
+        sleep(0.05)
     adc.stop_adc()
     value = sum/POWER_CONSUMPTION_MEASUREMENTS
     return value / 3.016
