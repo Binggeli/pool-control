@@ -67,6 +67,10 @@ Start flask app:
 - add entry to crontab:
   - sudo crontab -e
   - add line: @reboot /bin/bash /home/pi/bin/start_pool_app.sh &
+- instead of crontab entry create a systemd service:
+  - sudo cp pool_app.service /lib/systemd/system
+  - sudo systemctl start pool_app
+  - sudo systemctl enable pool_app
 
 Dump pool data periodically:
 - add entry to crontab:
