@@ -66,18 +66,18 @@ Install ADS1115 analog digital converter:
 Start flask app:
 - add entry to crontab:
   - sudo crontab -e
-  - add line: @reboot /bin/bash /home/pi/Development/start_pool_app.sh &
+  - add line: @reboot /bin/bash /home/pi/bin/start_pool_app.sh &
 
 Dump pool data periodically:
 - add entry to crontab:
   - sudo crontab -e
-  - add line: */5 * * * * /usr/bin/python3 /home/pi/Development/dump_pooldata.py
+  - add line: */5 * * * * /usr/bin/python3 /home/pi/bin/dump_pooldata.py
 
 Switch pump:
 - add entries to crontab:
   - sudo crontab -e
-  - add line: 0   8 * * * /usr/bin/python3 /home/pi/Development/pump.py on
-  - add line: 0  20 * * * /usr/bin/python3 /home/pi/Development/pump.py off
+  - add line: 0   8 * * * /usr/bin/python3 /home/pi/bin/pump.py on
+  - add line: 0  20 * * * /usr/bin/python3 /home/pi/bin/pump.py off
 
 Pair bluetooth button:
 - sudo bluetoothctl
