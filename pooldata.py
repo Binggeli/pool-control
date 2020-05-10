@@ -79,6 +79,22 @@ def gpu_temperature():
               stdout=PIPE, universal_newlines=True).stdout
     return out[5:-3]
 
+def status_dict():
+    "Return dict with current data for the pool."
+    return {'temperature':
+                {'water': temperature(POOL_TEMP_SENSOR),
+                 'surface': temperature(SURFACE_TEMP_SENSOR),
+                 'air': temperature(AIR_TEMP_SENSOR)},
+            'light': light_intensity(),
+            'pressure': pressure(FILTER_PRESSURE_CHANNEL),
+            'pump':
+                {'status': pump_status(),
+                 'pressure': pressure(FILTER_PRESSURE_CHANNEL),
+                 'power': powerconsumption(POWER_CONSUMPTION_CHANNEL)},
+            'relay':
+                {'pump': pump_status()},
+            'timestamp': '{:%d.%m.%Y %H:%M:%S}'.format(datetime.now())}
+
 
 if __name__ == "__main__":
     print('Pool temperature: ', temperature(POOL_TEMP_SENSOR))
