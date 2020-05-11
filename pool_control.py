@@ -59,9 +59,7 @@ def pumptime(temperature):
 
 def load_data():
     "Return the latest data object loaded from the json file."
-    datafile = LATESTDATAPATH
-    with datafile.open("rt") as datastream:
-        data = json.load(datastream)
+    data = json.load(LATESTDATAPATH.read_text())
     return data
 
 def save_data(data, timestamp, latest=True):
@@ -81,8 +79,11 @@ def save_data(data, timestamp, latest=True):
 def load_manual_control(timestamp):
     "Return manual control status based on manual control data files."
     data = [json.load(datafile.read_text()) for datafile in MANUALDATAPATH.glob("*.json")]
-    return max([d for d in data if d.starttime <= timestamp and timestamp < d.stoptime],
-               key=lambda d: d.priority).status
+    data = [d for d in data if d.starttime <= timestamp and timestamp < d.stoptime]
+    if data.empty:
+        return None
+    else:
+        return max(d, key=lambda d: d.priority).status
 
 def next_time(timestamp, hour=0, minute=0, second=0, microsecond=0):
     "Return the next point in time with the given local hour/minute/second."
