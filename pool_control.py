@@ -89,7 +89,7 @@ def load_manual_control(timestamp):
 
 def next_time(timestamp, hour=0, minute=0, second=0, microsecond=0):
     "Return the next point in time with the given local hour/minute/second."
-    next = timestamp.replace(hour=hour, minute=minute, second=second, microsecond=microsecond)
+    next = timestamp.replace(hour, minute, second, microsecond)
     if next < timestamp:
         next = next + timedelta(days=1)
     return next
