@@ -62,7 +62,7 @@ def load_data():
     try:
         return json.load(LATESTDATAPATH.read_text())
     except FileNotFoundError:
-        return None
+        return status_dict()
 
 def save_data(data, timestamp, latest=True):
     """Save data object as a json file.
