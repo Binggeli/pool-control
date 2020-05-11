@@ -59,8 +59,10 @@ def pumptime(temperature):
 
 def load_data():
     "Return the latest data object loaded from the json file."
-    data = json.load(LATESTDATAPATH.read_text())
-    return data
+    try:
+        return json.load(LATESTDATAPATH.read_text())
+    except FileNotFoundError:
+        return None
 
 def save_data(data, timestamp, latest=True):
     """Save data object as a json file.
