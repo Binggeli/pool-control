@@ -80,7 +80,7 @@ def save_data(data, timestamp, latest=True):
 
 def load_manual_control(timestamp):
     "Return manual control status based on manual control data files."
-    data = [json.load(datafile.read_text)) for datafile in MANUALDATAPATH.glob("*.json")]
+    data = [json.load(datafile.read_text()) for datafile in MANUALDATAPATH.glob("*.json")]
     return max([d for d in data if d.starttime <= timestamp and timestamp < d.stoptime],
                key=lambda d: d.priority).status
 
@@ -134,3 +134,4 @@ if __name__ == "__main__":
     print('Temperature   Pump runtime')
     for temp in range(30):
         print('{0:12}: {1}'.format(temp, pumptime(temp)))
+    control_pool(None)
