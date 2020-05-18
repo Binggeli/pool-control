@@ -1,6 +1,6 @@
-from os import path
 from time import sleep
 from datetime import datetime
+from pathlib import Path
 from subprocess import run, PIPE
 
 import Adafruit_ADS1x15
@@ -14,15 +14,14 @@ POWER_CONSUMPTION_CHANNEL = 1
 POWER_CONSUMPTION_MEASUREMENTS = 20
 PUMP_SWITCH_CHANNEL = '26'
 
-W1_DEVICE_PATH = r'/sys/devices/w1_bus_master1'
+W1_DEVICE_PATH = Path(r'/sys/devices/w1_bus_master1')
 
 SMBUS = smbus.SMBus(1)
 
 
 def temperature(address):
     "Return temperature read from sensor with address"
-    with open(path.join(W1_DEVICE_PATH, address, 'w1_slave'), 'rt') as f:
-        lines = f.readlines()
+    lines = (W1_DEVICE_PATH / address / 'w1_slave').read_text()
     if lines[0].strip()[-3:] == 'YES':
         line = lines[1].strip()
         return int(line[line.find('t=')+2:])/1000
@@ -107,4 +106,3 @@ if __name__ == "__main__":
     print('Pump status: ', pump_status())
     print('CPU temperature: ', cpu_temperature())
     print('GPU temperature: ', gpu_temperature())
-
