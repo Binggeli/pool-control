@@ -2,11 +2,12 @@ from argparse import ArgumentParser
 import logging
 import RPi.GPIO as GPIO
 
-from pooldata import temperature, POOL_TEMP_SENSOR, PUMP_SWITCH_CHANNEL
+import pool_data as pd
+from pool_data import temperature, POOL_TEMP_SENSOR, PUMP_SWITCH_CHANNEL
 
 
 def run_pump(state):
-    channel = int(PUMP_SWITCH_CHANNEL)
+    channel = int(pd.PUMP_SWITCH_CHANNEL)
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
     GPIO.setup(channel, GPIO.OUT)
@@ -25,6 +26,6 @@ if __name__ == "__main__":
     if args.state == 'on':
         logging.info('Switching pump on')
         run_pump(True)
-    elif (temperature(POOL_TEMP_SENSOR) < 25 or args.force):
+    elif (pd.temperature(pd.POOL_TEMP_SENSOR) < 25 or args.force):
         logging.info('Switching pump off')
         run_pump(False)

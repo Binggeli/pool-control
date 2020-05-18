@@ -2,7 +2,7 @@ from os import path
 from datetime import datetime
 from csv import writer
 
-import pooldata
+import pool_data as pd
 
 csv_name = '/home/pi/Documents/pooldata_{0:%Y-%m-%d}.csv'.format(datetime.now())
 
@@ -23,13 +23,13 @@ if not path.exists(csv_name):
 with open(csv_name, 'a') as f:
     csv = writer(f)
     csv.writerow([datetime.now().isoformat(),
-                  pooldata.temperature(pooldata.POOL_TEMP_SENSOR),
-                  pooldata.temperature(pooldata.SURFACE_TEMP_SENSOR),
-                  pooldata.temperature(pooldata.AIR_TEMP_SENSOR),
-                  pooldata.light_intensity(),
-                  pooldata.pressure(pooldata.FILTER_PRESSURE_CHANNEL),
-                  pooldata.powerconsumption(pooldata.POWER_CONSUMPTION_CHANNEL),
-                  pooldata.pump_status(),
-                  pooldata.cpu_temperature(),
-                  pooldata.gpu_temperature()
+                  pd.temperature(pd.POOL_TEMP_SENSOR),
+                  pd.temperature(pd.SURFACE_TEMP_SENSOR),
+                  pd.temperature(pd.AIR_TEMP_SENSOR),
+                  pd.light_intensity(),
+                  pd.pressure(pd.FILTER_PRESSURE_CHANNEL),
+                  pd.powerconsumption(pd.POWER_CONSUMPTION_CHANNEL),
+                  pd.pump_status(),
+                  pd.cpu_temperature(),
+                  pd.gpu_temperature()
                  ])

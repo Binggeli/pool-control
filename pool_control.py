@@ -33,14 +33,12 @@ The manual control can be taken with different priorities:
 
 from datetime import datetime, timedelta
 from pathlib import Path
-import os
 import json
 
-from pooldata import status_dict
+from pool_status import PoolStatus
 from pump import run_pump
+import pool_data as pd
 
-DATAPATH = Path.home() / "Documents"
-LATESTDATAPATH = DATAPATH / "latestdata.json"
 MANUALDATAPATH = DATAPATH / "manual"
 LIGHT_TRESHOLD = {False: 25000, True: 15000}
 
@@ -56,27 +54,6 @@ def pumptime(temperature):
                         24),
                     0)
     return timedelta(hours=pumphours)
-
-def load_data():
-    "Return the latest data object loaded from the json file."
-    try:
-        return json.load(LATESTDATAPATH.read_text())
-    except FileNotFoundError:
-        return status_dict()
-
-def save_data(data, timestamp, latest=True):
-    """Save data object as a json file.
-
-    The filename contains the timestamp of the data object.
-    If latest is True (default) a symbolic link is created
-    with the name "latestdata".
-    """
-    datafile = DATAPATH / "data_{:%Y%m%d%H%M%S}.json".format(timestamp)
-    with datafile.open("wt") as datastream:
-        json.dump(data, datastream)
-    if latest:
-        os.symlink(str(datafile),
-                   str(LATESTDATAPATH))
 
 def load_manual_control(timestamp):
     "Return manual control status based on manual control data files."
@@ -97,10 +74,10 @@ def next_time(timestamp, hour=0, minute=0, second=0, microsecond=0):
 def control_pool(curr_data):
     "Main loop to control the pool pump"
     if curr_data is None:
-        prev_data = load_data()
+        prev_data = PoolStatus.load()
     else:
         prev_data = curr_data
-    curr_data = status_dict()
+    curr_data = PoolStatus().update()
     # update min and max temperatures
     reset_min = (curr_data['timestamp'] > next_time(prev_data['timestamp'], hour=18))
     for sensor in curr_data['temperature']:
@@ -108,8 +85,8 @@ def control_pool(curr_data):
             curr_data['min-temperature'][sensor] = curr_data['temperature'][sensor]
     reset_max = (curr_data['timestamp'] > next_time(prev_data['timestamp'], hour=6))
     for sensor in curr_data['temperature']:
-        if curr_data['temperature'][sensor] > curr_data['min-temperature'][sensor] or reset_max:
-            curr_data['min-temperature'][sensor] = curr_data['temperature'][sensor]
+        if curr_data['temperature'][sensor] > curr_data['max-temperature'][sensor] or reset_max:
+            curr_data['max-temperature'][sensor] = curr_data['temperature'][sensor]
     # update pump runtime
     if curr_data['timestamp'] <= next_time(prev_data['timestamp'], hour=6):
         curr_data['pump']['runtime'] = prev_data['pump']['runtime']
@@ -127,7 +104,7 @@ def control_pool(curr_data):
         run_pump(True)
     else:
         run_pump(False)
-    curr_data['pump']['status'] = pooldata.pump_status()
+    curr_data['pump']['status'] = pd.pump_status()
     # save dict to json file
     save_data(curr_data, curr_data['timestamp'], latest=True)
     return curr_data
