@@ -32,7 +32,7 @@ class PoolStatus:
 
     def __repr__(self):
         return 'PoolStatus({0}): {1}'.format(repr(self.timestamp),
-                                             repr(self.__dict__()))
+                                             repr(self.__dict__))
 
     def update(self):
         "Update status information."
@@ -84,4 +84,4 @@ class PoolStatus:
 
 
 if __name__ == "__main__":
-    pprint(PoolData().update())
+    pprint(PoolStatus().update())

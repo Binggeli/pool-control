@@ -21,7 +21,7 @@ SMBUS = smbus.SMBus(1)
 
 def temperature(address):
     "Return temperature read from sensor with address"
-    lines = (W1_DEVICE_PATH / address / 'w1_slave').read_text()
+    lines = (W1_DEVICE_PATH / address / 'w1_slave').read_text().split('\n')
     if lines[0].strip()[-3:] == 'YES':
         line = lines[1].strip()
         return int(line[line.find('t=')+2:])/1000
