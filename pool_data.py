@@ -45,16 +45,19 @@ def powerconsumption(channel):
     - sensor: 1A is 0.185V
     - ADC: 32767 is 4.096 V (gain = 1)
     - Power: 230 * 4.096/0.185 * value / 32767
+
+    The readings are oscillating around the zero. The amplitude
+    is calculated as (max - min)/2.
+
+    The scaling factor is:
+        230 * 4.096/0.185 * 1/2 * 1/32767 ~ 0.07771
     """
     adc = Adafruit_ADS1x15.ADS1115()
-    sum = 0
     adc.start_adc(channel, gain=1)
-    for i in range(POWER_CONSUMPTION_MEASUREMENTS):
-        sum += abs(adc.get_last_result() - 13179.2)
-        sleep(0.05)
+    reading = [adc.get_last_result()
+               for _ in range(POWER_CONSUMPTION_MEASUREMENTS)]
     adc.stop_adc()
-    value = sum/POWER_CONSUMPTION_MEASUREMENTS
-    return value / 3.016
+    return 0.07771 * (max(reading) - min(reading))
 
 def light_intensity():
     """Return the light intensity"""
