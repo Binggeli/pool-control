@@ -78,36 +78,36 @@ def control_pool(curr_data):
         prev_data = curr_data
     curr_data = PoolStatus().update()
     # update min and max temperatures
-    reset_min = (curr_data['timestamp'] > next_time(prev_data['timestamp'], hour=18))
-    for sensor in curr_data['temperature']:
-        if curr_data['temperature'][sensor] < curr_data['min-temperature'][sensor] or reset_min:
-            curr_data['min-temperature'][sensor] = curr_data['temperature'][sensor]
-    reset_max = (curr_data['timestamp'] > next_time(prev_data['timestamp'], hour=6))
-    for sensor in curr_data['temperature']:
-        if curr_data['temperature'][sensor] > curr_data['max-temperature'][sensor] or reset_max:
-            curr_data['max-temperature'][sensor] = curr_data['temperature'][sensor]
+    reset_min = (curr_data.timestamp > next_time(prev_data.timestamp, hour=18))
+    for sensor in curr_data.temperature:
+        if curr_data.temperature[sensor] < curr_data.min-temperature[sensor] or reset_min:
+            curr_data.min-temperature[sensor] = curr_data.temperature[sensor]
+    reset_max = (curr_data.timestamp > next_time(prev_data.timestamp, hour=6))
+    for sensor in curr_data.temperature:
+        if curr_data.temperature[sensor] > curr_data.max-temperature[sensor] or reset_max:
+            curr_data.max-temperature[sensor] = curr_data.temperature[sensor]
     # update pump runtime
-    if curr_data['timestamp'] <= next_time(prev_data['timestamp'], hour=6):
-        curr_data['pump']['runtime'] = prev_data['pump']['runtime']
+    if curr_data.timestamp <= next_time(prev_data.timestamp, hour=6):
+        curr_data.pump['runtime'] = prev_data.pump['runtime']
     else:
-        curr_data['pump']['runtime'] = timedelta(hours=0)
-    if prev_data['pump']['status'] == True:
-        curr_data['pump']['runtime'] += curr_data['timestamp'] - prev_data['timestamp']
+        curr_data.pump['runtime'] = timedelta(hours=0)
+    if prev_data.pump['status'] == True:
+        curr_data.pump['runtime'] += curr_data.timestamp - prev_data.timestamp
     # update pump status
-    curr_data['pump']['target_runtime'] = pumphours(curr_data['temperature']['water'])
-    runtime = curr_data['pump']['target_runtime'] - curr_data['pump']['runtime']
+    curr_data.pump['target_runtime'] = pumphours(curr_data.temperature['water'])
+    runtime = curr_data.pump['target_runtime'] - curr_data.pump['runtime']
     # load manual pool triggers:
     manual_control = load_manual_control()
     if not manual_control is None:
         run_pump(manual_control)
-    elif (curr_data['timestamp'] > next_time(curr_data['timestamp'], hour=6) - runtime or
-        curr_data['light'] > LIGHT_THRESHOLD[curr_data['pump']['status']]):
+    elif (curr_data.timestamp > next_time(curr_data.timestamp, hour=6) - runtime or
+          curr_data.light > LIGHT_THRESHOLD[curr_data.pump['status']]):
         run_pump(True)
     else:
         run_pump(False)
-    curr_data['pump']['status'] = pd.pump_status()
+    curr_data.pump['status'] = pd.pump_status()
     # save dict to json file
-    save_data(curr_data, curr_data['timestamp'], latest=True)
+    save_data(curr_data, curr_data.timestamp, latest=True)
     return curr_data
 
 
