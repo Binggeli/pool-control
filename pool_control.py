@@ -36,10 +36,10 @@ from pathlib import Path
 import json
 
 from pool_status import PoolStatus
+from pool_trigger import PoolTrigger
 from pump import run_pump
 import pool_data as pd
 
-MANUALDATAPATH = DATAPATH / "manual"
 LIGHT_TRESHOLD = {False: 25000, True: 15000}
 
 def pumptime(temperature):
@@ -57,12 +57,11 @@ def pumptime(temperature):
 
 def load_manual_control(timestamp):
     "Return manual control status based on manual control data files."
-    data = [json.load(datafile.read_text()) for datafile in MANUALDATAPATH.glob("*.json")]
-    data = [d for d in data if d.starttime <= timestamp and timestamp < d.stoptime]
-    if data.empty:
+    trg = PoolTrigger.load()
+    if trg is None:
         return None
     else:
-        return max(d, key=lambda d: d.priority).status
+        return trg.status
 
 def next_time(timestamp, hour=0, minute=0, second=0, microsecond=0):
     "Return the next point in time with the given local hour/minute/second."
@@ -97,6 +96,8 @@ def control_pool(curr_data):
     # update pump status
     curr_data['pump']['target_runtime'] = pumphours(curr_data['temperature']['water'])
     runtime = curr_data['pump']['target_runtime'] - curr_data['pump']['runtime']
+    # load manual pool triggers:
+    manual_control = load_manual_control()
     if not manual_control is None:
         run_pump(manual_control)
     elif (curr_data['timestamp'] > next_time(curr_data['timestamp'], hour=6) - runtime or
