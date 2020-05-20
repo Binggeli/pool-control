@@ -80,11 +80,15 @@ def control_pool(curr_data):
     # update min and max temperatures
     reset_min = (curr_data.timestamp > next_time(prev_data.timestamp, hour=18))
     for sensor in curr_data.temperature:
-        if curr_data.temperature[sensor] < curr_data.min_temperature[sensor] or reset_min:
+        if (sensor not in curr_data.min_temperature or
+            curr_data.temperature[sensor] < curr_data.min_temperature[sensor] or
+            reset_min):
             curr_data.min_temperature[sensor] = curr_data.temperature[sensor]
     reset_max = (curr_data.timestamp > next_time(prev_data.timestamp, hour=6))
     for sensor in curr_data.temperature:
-        if curr_data.temperature[sensor] > curr_data.max_temperature[sensor] or reset_max:
+        if (sensor not in curr_data.max_temperature or
+            curr_data.temperature[sensor] > curr_data.max_temperature[sensor] or
+            reset_max):
             curr_data.max_temperature[sensor] = curr_data.temperature[sensor]
     # update pump runtime
     if curr_data.timestamp <= next_time(prev_data.timestamp, hour=6):
