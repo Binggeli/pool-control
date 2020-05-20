@@ -60,7 +60,7 @@ class PoolTrigger:
         return str(datafile)
 
     @classmethod
-    def load(cls, priority=None):
+    def load(cls, timestamp=datetime.now(), priority=None):
         """Return the trigger object for the given priority.
 
         If no priority is given the object with highest priority is returned,
@@ -82,7 +82,7 @@ class PoolTrigger:
                                                      DATE_FORMAT)
                 newobj.starttime = datetime.strptime(data['starttime'],
                                                      DATE_FORMAT)
-                if newobj.stoptime > datetime.now():
+                if newobj.stoptime > timestamp:
                     obj = newobj
         return obj
 

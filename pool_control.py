@@ -57,7 +57,7 @@ def pumptime(temperature):
 
 def load_manual_control(timestamp):
     "Return manual control status based on manual control data files."
-    trg = PoolTrigger.load()
+    trg = PoolTrigger.load(timestamp=timestamp)
     if trg is None:
         return None
     else:
@@ -101,7 +101,7 @@ def control_pool(curr_data):
     curr_data.pump['target_runtime'] = pumptime(curr_data.temperature['water'])
     runtime = curr_data.pump['target_runtime'] - curr_data.pump['runtime']
     # load manual pool triggers:
-    manual_control = load_manual_control()
+    manual_control = load_manual_control(curr_data.timestamp)
     if not manual_control is None:
         run_pump(manual_control)
     elif (curr_data.timestamp > next_time(curr_data.timestamp, hour=6) - runtime or
