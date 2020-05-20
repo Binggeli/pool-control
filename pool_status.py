@@ -8,6 +8,7 @@ import pool_data as pd
 
 DATE_FORMAT = r'%Y-%m-%d %H:%M:%S'
 DATA_PATH = Path.home() / "Documents"
+DATA_NAME = r'data_{:%Y%m%d%H%M%S}.json'
 LATESTDATA_PATH = DATA_PATH / "latestdata.json"
 
 
@@ -49,7 +50,11 @@ class PoolStatus:
     def json(self):
         "Return object as json-encoded string."
         data = self.__dict__.copy()
-        data['timestamp'] = self.timestamp.strftime(DATE_FORMAT)
+        for k in data:
+            if isinstance(data[k], datetime):
+                data[k] = data[k].strftime(DATE_FORMAT)
+            if isinstance(data[k], timedelta):
+                data[k] = data[k].total_seconds()
         return json.dumps(data)
 
     def save(self, latest=True):
@@ -59,11 +64,11 @@ class PoolStatus:
         If latest is True (default) a symbolic link is created
         with the name "latestdata".
         """
-        datafile = DATAPATH / "data_{:%Y%m%d%H%M%S}.json".format(timestamp)
+        datafile = DATA_PATH / DATA_NAME.format(timestamp)
         datafile.write_text(self.json())
         if latest:
             os.symlink(str(datafile),
-                       str(LATESTDATAPATH))
+                       str(LATESTDATA_PATH))
         return str(datafile)
 
     @classmethod
