@@ -65,7 +65,7 @@ class PoolStatus:
         If latest is True (default) a symbolic link is created
         with the name "latestdata".
         """
-        datafile = DATA_PATH / DATA_NAME.format(timestamp)
+        datafile = DATA_PATH / DATA_NAME.format(self.timestamp)
         datafile.write_text(self.json())
         if latest:
             os.symlink(str(datafile),
