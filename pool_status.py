@@ -75,7 +75,7 @@ class PoolStatus:
     def load(cls):
         "Return the latest data object loaded from the json file."
         try:
-            data = json.load(LATESTDATAPATH.read_text())
+            data = json.load(LATESTDATA_PATH.read_text())
         except FileNotFoundError:
             return cls().update()
         else:

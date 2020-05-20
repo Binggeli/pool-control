@@ -71,7 +71,7 @@ class PoolTrigger:
             filepattern = DATA_NAME.format('*')
         else:
             filepattern = DATA_NAME.format(priority)
-        for filepath in DATAPATH.glob(filepattern):
+        for filepath in DATA_PATH.glob(filepattern):
             try:
                 data = json.load(filepath.read_text())
             except json.JSONDecodeError:
