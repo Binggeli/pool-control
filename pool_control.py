@@ -98,7 +98,7 @@ def control_pool(curr_data):
     if prev_data.pump['status'] == True:
         curr_data.pump['runtime'] += curr_data.timestamp - prev_data.timestamp
     # update pump status
-    curr_data.pump['target_runtime'] = pumphours(curr_data.temperature['water'])
+    curr_data.pump['target_runtime'] = pumptime(curr_data.temperature['water'])
     runtime = curr_data.pump['target_runtime'] - curr_data.pump['runtime']
     # load manual pool triggers:
     manual_control = load_manual_control()
