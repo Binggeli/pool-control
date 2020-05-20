@@ -33,6 +33,7 @@ The manual control can be taken with different priorities:
 
 from datetime import datetime, timedelta
 from pathlib import Path
+from pprint import pprint
 import json
 
 from pool_status import PoolStatus
@@ -111,7 +112,7 @@ def control_pool(curr_data):
         run_pump(False)
     curr_data.pump['status'] = pd.pump_status()
     # save dict to json file
-    save_data(curr_data, curr_data.timestamp, latest=True)
+    curr_data.save()
     return curr_data
 
 
@@ -119,4 +120,4 @@ if __name__ == "__main__":
     print('Temperature   Pump runtime')
     for temp in range(30):
         print('{0:12}: {1}'.format(temp, pumptime(temp)))
-    control_pool(None)
+    pprint(control_pool(None))
