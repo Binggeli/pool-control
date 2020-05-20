@@ -1,5 +1,5 @@
 from pprint import pprint
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 import os
 import json
@@ -26,7 +26,8 @@ class PoolStatus:
         self.min_temperature = {}
         self.max_temperature = {}
         self.light = 0
-        self.pump = {}
+        self.pump = {'status': None,
+                     'runtime': timedelta(hours=0)}
 
     def __str__(self):
         return 'PoolStatus as of {0}'.format(self.timestamp.strftime(DATE_FORMAT))
