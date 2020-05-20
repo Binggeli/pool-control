@@ -40,7 +40,7 @@ from pool_trigger import PoolTrigger
 from pump import run_pump
 import pool_data as pd
 
-LIGHT_TRESHOLD = {False: 25000, True: 15000}
+LIGHT_THRESHOLD = {False: 25000, True: 15000}
 
 def pumptime(temperature):
     """Return the target runtime in hours for the given temperature.
