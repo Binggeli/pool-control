@@ -1,7 +1,6 @@
 from pprint import pprint
 from datetime import datetime, timedelta
 from pathlib import Path
-from os import symlink
 from jsondt import dumps, loads
 
 import pool_data as pd
@@ -58,8 +57,9 @@ class PoolStatus:
         datafile = DATA_PATH / DATA_NAME.format(self.timestamp)
         datafile.write_text(dumps(self.__dict__))
         if latest:
-            symlink(str(datafile),
-                    str(LATESTDATA_PATH))
+            if LATESTDATA_PATH.is_symlink():
+                LATESTDATA_PATH.unlink()
+            LATESTDATA_PATH.symlink_to(datafile)
         return str(datafile)
 
     @classmethod
@@ -79,4 +79,4 @@ class PoolStatus:
 
 
 if __name__ == "__main__":
-    pprint(PoolStatus().update())
+    print(PoolStatus().update().save())

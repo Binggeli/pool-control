@@ -3,6 +3,8 @@ from datetime import date, datetime, timedelta
 import json
 import re
 
+JSONDecodeError = json.JSONDecodeError
+
 DATETIME_FORMAT = r'%Y-%m-%dT%H:%M:%S'
 DATETIME_RE = re.compile(r'([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})([.]([0-9]{6}))?')
 
@@ -49,13 +51,13 @@ class JSONDateTimeEncoder(json.JSONEncoder):
             return super().default(obj)
 
 def dump(obj, fp, **kwargs):
-    return json.dump(obj, fp, cls=JSONDateTimeEncode, kwargs)
+    return json.dump(obj, fp, cls=JSONDateTimeEncoder, **kwargs)
 
 def dumps(obj, **kwargs):
-    return json.dumps(obj, cls=JSONDateTimeEncode, kwargs)
+    return json.dumps(obj, cls=JSONDateTimeEncoder, **kwargs)
 
 def load(fp, **kwargs):
-    return json.load(fp, cls=JSONDateTimeDecode, kwargs)
+    return json.load(fp, cls=JSONDateTimeDecoder, **kwargs)
 
 def loads(s, **kwargs):
-    return json.loads(s, cls=JSONDateTimeDecode, kwargs)
+    return json.loads(s, cls=JSONDateTimeDecoder, **kwargs)
