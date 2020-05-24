@@ -24,15 +24,17 @@ class JSONDateTimeDecoder(json.JSONDecoder):
                 obj = datetime(year=self.int(m, 1), month=self.int(m, 2), day=self.int(m, 3),
                                hour=self.int(m, 4), minute=self.int(m, 5), second=self.int(m, 6),
                                microsecond=self.int(m, 8))
+                return obj
             m = TIMEDELTA_RE.match(obj)
             if m is not None:
                 obj = timedelta(days=self.int(m, 2), hours=self.int(m, 3),
                                 minutes=self.int(m, 4), seconds=self.int(m, 5),
                                 microseconds=self.int(m, 7))
+                return obj
         else:
             try:
                 for el in iter(obj):
-                    el = self.datetime_parser(el)
+                    obj[el] = self.datetime_parser(obj[el])
             except TypeError:
                 pass
         return obj
