@@ -34,7 +34,6 @@ The manual control can be taken with different priorities:
 from datetime import datetime, timedelta
 from pathlib import Path
 from pprint import pprint
-import json
 
 from pool_status import PoolStatus
 from pool_trigger import PoolTrigger

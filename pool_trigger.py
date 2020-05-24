@@ -1,9 +1,7 @@
 from pprint import pprint
 from datetime import date, datetime, timedelta
 from pathlib import Path
-
-import os
-import json
+from jsondt import dumps, loads, JSONDecodeError
 
 DATE_FORMAT = r'%Y-%m-%d %H:%M:%S'
 DATA_PATH = Path.home() / "Documents"
@@ -43,20 +41,10 @@ class PoolTrigger:
                                                    repr(self.priority),
                                                    repr(self.__dict__))
 
-    def json(self):
-        "Return object as json-encoded string."
-        data = self.__dict__.copy()
-        for k in data:
-            if isinstance(data[k], datetime):
-                data[k] = data[k].strftime(DATE_FORMAT)
-            if isinstance(data[k], timedelta):
-                data[k] = data[k].total_seconds()
-        return json.dumps(data)
-
     def save(self):
         """Save object to a json file and return its path."""
         datafile = DATA_PATH / DATA_NAME.format(self.priority)
-        datafile.write_text(self.json())
+        datafile.write_text(dumps(self.__dict__))
         return str(datafile)
 
     @classmethod
@@ -73,15 +61,14 @@ class PoolTrigger:
             filepattern = DATA_NAME.format(priority)
         for filepath in DATA_PATH.glob(filepattern):
             try:
-                data = json.load(filepath.read_text())
-            except json.JSONDecodeError:
+                data = loads(filepath.read_text())
+            except JSONDecodeError:
                 continue
             if obj is None or data['priority'] > obj.priority:
-                newobj = cls(data['status'], data['priority'], seconds=data['timedelta'])
-                newobj.timestamp = datetime.strptime(data['timestamp'],
-                                                     DATE_FORMAT)
-                newobj.starttime = datetime.strptime(data['starttime'],
-                                                     DATE_FORMAT)
+                newobj = cls(data['status'], data['priority'])
+                newobj.timestamp = data['timestamp']
+                newobj.starttime = data['starttime']
+                newobj.timedelta = data['timedelta']
                 if newobj.stoptime > timestamp:
                     obj = newobj
         return obj

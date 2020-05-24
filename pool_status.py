@@ -1,8 +1,8 @@
 from pprint import pprint
 from datetime import datetime, timedelta
 from pathlib import Path
-import os
-import json
+from os import symlink
+from jsondt import dumps, loads
 
 import pool_data as pd
 
@@ -48,16 +48,6 @@ class PoolStatus:
         self.timestamp = datetime.now()
         return self
 
-    def json(self):
-        "Return object as json-encoded string."
-        data = self.__dict__.copy()
-        for k in data:
-            if isinstance(data[k], datetime):
-                data[k] = data[k].strftime(DATE_FORMAT)
-            if isinstance(data[k], timedelta):
-                data[k] = data[k].total_seconds()
-        return json.dumps(data)
-
     def save(self, latest=True):
         """Save object to a json file and return its path.
 
@@ -66,17 +56,17 @@ class PoolStatus:
         with the name "latestdata".
         """
         datafile = DATA_PATH / DATA_NAME.format(self.timestamp)
-        datafile.write_text(self.json())
+        datafile.write_text(dumps(self.__dict__))
         if latest:
-            os.symlink(str(datafile),
-                       str(LATESTDATA_PATH))
+            symlink(str(datafile),
+                    str(LATESTDATA_PATH))
         return str(datafile)
 
     @classmethod
     def load(cls):
         "Return the latest data object loaded from the json file."
         try:
-            data = json.load(LATESTDATA_PATH.read_text())
+            data = loads(LATESTDATA_PATH.read_text())
         except FileNotFoundError:
             return cls().update()
         else:
@@ -84,8 +74,7 @@ class PoolStatus:
             obj.temperature = data['temperature']
             obj.light = data['light']
             obj.pump = data['pump']
-            obj.timestamp = datetime.strptime(data['timestamp'],
-                                              DATE_FORMAT)
+            obj.timestamp = data['timestamp']
             return obj
 
 
