@@ -31,9 +31,10 @@ The manual control can be taken with different priorities:
         change status for 8 hours (after adding chemicals)
 """
 
-from datetime import datetime, timedelta
+from datetime import datetime, time, timedelta
 from pathlib import Path
 from pprint import pprint
+import logging
 
 from pool_status import PoolStatus
 from pool_trigger import PoolTrigger
@@ -114,9 +115,18 @@ def control_pool(curr_data):
     curr_data.save()
     return curr_data
 
+def main():
+    "Run the main loop forever"
+    status = None
+    try:
+        while True:
+            status = control_pool(status)
+    except Exception as exception:
+        logging.exception('Exception in main loop of pool control at %s', datetime.now())
+
 
 if __name__ == "__main__":
-    print('Temperature   Pump runtime')
-    for temp in range(30):
-        print('{0:12}: {1}'.format(temp, pumptime(temp)))
-    pprint(control_pool(None))
+    logger = logging.get_logger('PoolControl')
+    logger.addHandler(logging.handlers.TimedRotatingFileHandler('/var/log/pool/control.log',
+                                                                when='midnight', atTime=time(6)))
+    main()
