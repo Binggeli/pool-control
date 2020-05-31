@@ -126,7 +126,7 @@ def main():
 
 
 if __name__ == "__main__":
-    logger = logging.get_logger('PoolControl')
+    logger = logging.getLogger('PoolControl')
     logger.addHandler(logging.handlers.TimedRotatingFileHandler('/var/log/pool/control.log',
                                                                 when='midnight', atTime=time(6)))
     main()
