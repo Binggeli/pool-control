@@ -35,6 +35,7 @@ from datetime import datetime, time, timedelta
 from pathlib import Path
 from pprint import pprint
 import logging
+import logging.handlers
 
 from pool_status import PoolStatus
 from pool_trigger import PoolTrigger
@@ -122,11 +123,11 @@ def main():
         while True:
             status = control_pool(status)
     except Exception as exception:
-        logging.exception('Exception in main loop of pool control at %s', datetime.now())
+        logging.exception('Exception in main loop of pool control at %s: %s', datetime.now(), exception)
 
 
 if __name__ == "__main__":
-    logger = logging.getLogger('PoolControl')
-    logger.addHandler(logging.handlers.TimedRotatingFileHandler('/var/log/pool/control.log',
-                                                                when='midnight', atTime=time(6)))
+    logging.getLogger('PoolControl').addHandler(
+        logging.handlers.TimedRotatingFileHandler('/var/log/pool/control.log',
+                                                  when='midnight', atTime=time(6)))
     main()
