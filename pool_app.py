@@ -1,7 +1,9 @@
 from datetime import datetime
 from flask import Flask
 import json
-import pool_data as pd
+
+from pool_status import PoolStatus, LATESTDATA_PATH
+from pool_trigger import PoolTrigger
 from pump import run_pump
 
 app = Flask(__name__)
@@ -16,32 +18,18 @@ def pool_status():
     out += '<br>Daten vom {0:%d.%m.%Y %H:%M:%S}\n'.format(datetime.now())
     return out
 
-def pool_status_dict():
-    "Return dict with current data for the pool."
-    return {'temperature':
-                {'water': pd.temperature(pd.POOL_TEMP_SENSOR),
-                 'surface': pd.temperature(pd.SURFACE_TEMP_SENSOR),
-                 'air': pd.temperature(pd.AIR_TEMP_SENSOR)},
-            'light': pd.light_intensity(),
-            'pressure': pd.pressure(pd.FILTER_PRESSURE_CHANNEL),
-            'pump':
-                {'status': pd.pump_status(),
-                 'pressure': pd.pressure(pd.FILTER_PRESSURE_CHANNEL),
-                 'power': pd.powerconsumption(pd.POWER_CONSUMPTION_CHANNEL)},
-            'relay':
-                {'pump': pd.pump_status()},
-            'timestamp': '{:%d.%m.%Y %H:%M:%S}'.format(datetime.now())}
-
 @app.route('/status')
 def pool_status_json():
-    return json.dumps(pool_status_dict())
+    return LATESTDATA_PATH.read_text()
 
 @app.route('/pump/on')
 def pump_on():
+    PoolTrigger(True, 100, minutes=5)
     run_pump(True)
     return pool_status_json()
 
 @app.route('/pump/off')
 def pump_off():
+    PoolTrigger(False, 100, minutes=5)
     run_pump(False)
     return pool_status_json()

@@ -2,7 +2,7 @@ from os import path
 from datetime import datetime
 from csv import writer
 
-import pool_data as pd
+from pool_status import PoolStatus
 
 csv_name = '/home/pi/Documents/pooldata_{0:%Y-%m-%d}.csv'.format(datetime.now())
 
@@ -20,16 +20,18 @@ if not path.exists(csv_name):
                       'CPU Temperature',
                       'GPU Temperature'])
 
+ps = PoolStatus.load()
+
 with open(csv_name, 'a') as f:
     csv = writer(f)
     csv.writerow([datetime.now().isoformat(),
-                  pd.temperature(pd.POOL_TEMP_SENSOR),
-                  pd.temperature(pd.SURFACE_TEMP_SENSOR),
-                  pd.temperature(pd.AIR_TEMP_SENSOR),
-                  pd.light_intensity(),
-                  pd.pressure(pd.FILTER_PRESSURE_CHANNEL),
-                  pd.powerconsumption(pd.POWER_CONSUMPTION_CHANNEL),
-                  pd.pump_status(),
-                  pd.cpu_temperature(),
-                  pd.gpu_temperature()
+                  ps.temperature['water'],
+                  ps.temperature['surface'],
+                  ps.temperature['air'],
+                  ps.light,
+                  ps.pump['pressure'],
+                  ps.pump['power'],
+                  ps.pump['status'],
+                  ps.temperature['cpu'],
+                  ps.temperature['gpu']
                  ])

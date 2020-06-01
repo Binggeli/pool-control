@@ -40,6 +40,8 @@ class PoolStatus:
         self.temperature['water'] = pd.temperature(pd.POOL_TEMP_SENSOR)
         self.temperature['surface'] = pd.temperature(pd.SURFACE_TEMP_SENSOR)
         self.temperature['air'] = pd.temperature(pd.AIR_TEMP_SENSOR)
+        self.temperature['cpu'] = pd.cpu_temperature(),
+        self.temperature['gpu'] = pd.gpu_temperature(),
         self.light = pd.light_intensity()
         self.pump['status'] = pd.pump_status()
         self.pump['pressure'] = pd.pressure(pd.FILTER_PRESSURE_CHANNEL)

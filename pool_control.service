@@ -1,0 +1,14 @@
+[Unit]
+Description=Pool Control Service
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=3
+User=pi
+ExecStart=/usr/bin/python3 /home/pi/bin/pool_control.py
+
+[Install]
+WantedBy=multi-user.target
