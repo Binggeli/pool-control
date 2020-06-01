@@ -44,6 +44,9 @@ import pool_data as pd
 
 LIGHT_THRESHOLD = {False: 25000, True: 15000}
 
+LOGGER = logging.getLogger(__name__)
+
+
 def pumptime(temperature):
     """Return the target runtime in hours for the given temperature.
 
@@ -85,10 +88,10 @@ def control_pool(curr_data):
         if (sensor not in curr_data.min_temperature or
             curr_data.temperature[sensor] < curr_data.min_temperature[sensor] or
             reset_min):
-            logging.debug('Resetting min for %s from %s to %s (%s)', sensor,
-                          curr_data.min_temperature[sensor],
-                          curr_data.temperature[sensor],
-                          reset_min)
+            LOGGER.debug('Resetting min for %s from %s to %s (%s)', sensor,
+                         curr_data.min_temperature[sensor] if sensor in curr_data.min_temperature else '-',
+                         curr_data.temperature[sensor] if sensor in curr_data.temperature else '-',
+                         reset_min)
             curr_data.min_temperature[sensor] = curr_data.temperature[sensor]
     reset_max = (curr_data.timestamp > next_time(prev_data.timestamp, hour=6))
     for sensor in curr_data.temperature:
@@ -127,11 +130,13 @@ def main():
         while True:
             status = control_pool(status)
     except Exception as exception:
-        logging.exception('Exception in main loop of pool control at %s: %s', datetime.now(), exception)
+        LOGGER.exception('Exception in main loop of pool control at %s: %s', datetime.now(), exception)
+        return
 
 
 if __name__ == "__main__":
-    logging.getLogger('PoolControl').addHandler(
+    LOGGER.addHandler(
         logging.handlers.TimedRotatingFileHandler('/var/log/pool/control.log',
-                                                  when='midnight', atTime=time(6))).setLevel(logging.DEBUG)
+                                                  when='midnight', atTime=time(6)))
+    LOGGER.setLevel(logging.DEBUG)
     main()
