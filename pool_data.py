@@ -80,7 +80,7 @@ def gpu_temperature():
     "Return the temperature of the GPU"
     out = run(['/opt/vc/bin/vcgencmd', 'measure_temp'],
               stdout=PIPE, universal_newlines=True).stdout
-    return out[5:-3]
+    return float(out[5:-3])
 
 def status_dict():
     "Return dict with current data for the pool."
@@ -107,5 +107,5 @@ if __name__ == "__main__":
     print('Filter pressure: ', pressure(FILTER_PRESSURE_CHANNEL))
     print('Power consumption: ', powerconsumption(POWER_CONSUMPTION_CHANNEL))
     print('Pump status: ', pump_status())
-    print('CPU temperature: ', cpu_temperature())
-    print('GPU temperature: ', gpu_temperature())
+    print('CPU temperature: ', repr(cpu_temperature()))
+    print('GPU temperature: ', repr(gpu_temperature()))
