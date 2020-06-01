@@ -30,8 +30,10 @@ class InputDeviceDispatcher(file_dispatcher):
         for event in self.recv():
             if event.type == ecodes.EV_KEY:
                 if event.code == 115 and event.value == 1:
+                    PoolTrigger(True, 200, 30)
                     run_pump(True)
                 if event.code == 28 and event.value == 1:
+                    PoolTrigger(False, 200, 30)
                     run_pump(False)
                 print(repr(event))
 
