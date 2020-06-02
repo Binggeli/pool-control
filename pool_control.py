@@ -19,7 +19,7 @@ The algorithm to control the pool, i.e. mainly the pump, follows those steps:
     target runtime as function of temperature
     remaining runtime = target runtime - actual runtime
     if ((timestamp > day-end-time - remaining runtime) or
-        (light > lower-threshold if pump is on else higher-threshold) or 
+        (light > lower-threshold if pump is on else higher-threshold) or
         (timestamp < manual-end-time)): pump on
     else: pump off
     save data to json-file
@@ -75,53 +75,50 @@ def next_time(timestamp, hour=0, minute=0, second=0, microsecond=0):
         next = next + timedelta(days=1)
     return next
 
-def control_pool(curr_data):
+def control_pool(status):
     "Main loop to control the pool pump"
-    if curr_data is None:
-        prev_data = PoolStatus.load()
-    else:
-        prev_data = curr_data
-    curr_data = PoolStatus().update()
+    if status is None:
+        status = PoolStatus.load()
+    prev_timestamp = status.timestamp
+    status.update()
     # update min and max temperatures
-    reset_min = (curr_data.timestamp > next_time(prev_data.timestamp, hour=18))
-    for sensor in curr_data.temperature:
-        if (sensor not in curr_data.min_temperature or
-            curr_data.temperature[sensor] < curr_data.min_temperature[sensor] or
+    reset_min = (status.timestamp > next_time(prev_timestamp, hour=18))
+    for sensor in status.temperature:
+        if (sensor not in status.min_temperature or
+            status.temperature[sensor] < status.min_temperature[sensor] or
             reset_min):
             LOGGER.debug('Resetting min for %s from %s to %s (%s)', sensor,
-                         curr_data.min_temperature[sensor] if sensor in curr_data.min_temperature else '-',
-                         curr_data.temperature[sensor] if sensor in curr_data.temperature else '-',
+                         status.min_temperature[sensor] if sensor in status.min_temperature else '-',
+                         status.temperature[sensor] if sensor in status.temperature else '-',
                          reset_min)
-            curr_data.min_temperature[sensor] = curr_data.temperature[sensor]
-    reset_max = (curr_data.timestamp > next_time(prev_data.timestamp, hour=6))
-    for sensor in curr_data.temperature:
-        if (sensor not in curr_data.max_temperature or
-            curr_data.temperature[sensor] > curr_data.max_temperature[sensor] or
+            status.min_temperature[sensor] = status.temperature[sensor]
+    reset_max = (status.timestamp > next_time(prev_timestamp, hour=6))
+    for sensor in status.temperature:
+        if (sensor not in status.max_temperature or
+            status.temperature[sensor] > status.max_temperature[sensor] or
             reset_max):
-            curr_data.max_temperature[sensor] = curr_data.temperature[sensor]
+            status.max_temperature[sensor] = status.temperature[sensor]
     # update pump runtime
-    if curr_data.timestamp <= next_time(prev_data.timestamp, hour=6):
-        curr_data.pump['runtime'] = prev_data.pump['runtime']
-    else:
-        curr_data.pump['runtime'] = timedelta(hours=0)
-    if prev_data.pump['status'] == True:
-        curr_data.pump['runtime'] += curr_data.timestamp - prev_data.timestamp
+    if status.timestamp > next_time(prev_timestamp, hour=6):
+        status.pump['runtime'] = timedelta(hours=0)
+    if status.pump['status'] == True:
+        status.pump['runtime'] += status.timestamp - prev_timestamp
     # update pump status
-    curr_data.pump['target_runtime'] = pumptime(curr_data.temperature['water'])
-    runtime = curr_data.pump['target_runtime'] - curr_data.pump['runtime']
+    status.pump['target_runtime'] = pumptime(status.temperature['water'])
+    runtime = status.pump['target_runtime'] - status.pump['runtime']
     # load manual pool triggers:
-    manual_control = load_manual_control(curr_data.timestamp)
+    manual_control = load_manual_control(status.timestamp)
     if not manual_control is None:
         run_pump(manual_control)
-    elif (curr_data.timestamp > next_time(curr_data.timestamp, hour=6) - runtime or
-          curr_data.light > LIGHT_THRESHOLD[curr_data.pump['status']]):
+    elif (status.timestamp > next_time(status.timestamp, hour=6) - runtime or
+          status.light > LIGHT_THRESHOLD[status.pump['status']]):
         run_pump(True)
     else:
         run_pump(False)
-    curr_data.pump['status'] = pd.pump_status()
+    status.pump['status'] = pd.pump_status()
     # save dict to json file
-    curr_data.save()
-    return curr_data
+    status.save()
+    return status
 
 def main():
     "Run the main loop forever"
