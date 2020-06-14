@@ -19,14 +19,14 @@ class PoolTrigger:
     from json, it needs to know which attributes have to be converted.
     """
 
-    def __init__(self, status=True, priority=None, starttime=datetime.now(),
+    def __init__(self, status=True, priority=None, starttime=None,
                  seconds=0, minutes=0, hours=0, days=0, weeks=0):
         self.status = status
         self.priority = priority
+        self.starttime = starttime if starttime is not None else datetime.now()
         self.timestamp = datetime.now()
         self.timedelta = timedelta(seconds=seconds, minutes=minutes, hours=hours,
                                    days=days, weeks=weeks)
-        self.starttime = starttime
 
     @property
     def stoptime(self):
