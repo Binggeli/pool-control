@@ -24,12 +24,12 @@ def pool_status_json():
 
 @app.route('/pump/on')
 def pump_on():
-    PoolTrigger(True, 100, minutes=5)
+    PoolTrigger(True, 100, minutes=5).save()
     run_pump(True)
     return pool_status_json()
 
 @app.route('/pump/off')
 def pump_off():
-    PoolTrigger(False, 100, minutes=5)
+    PoolTrigger(False, 100, minutes=5).save()
     run_pump(False)
     return pool_status_json()
