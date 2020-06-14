@@ -6,8 +6,8 @@ from jsondt import dumps, loads
 import pool_data as pd
 
 DATE_FORMAT = r'%Y-%m-%d %H:%M:%S'
-DATA_PATH = Path.home() / "Documents"
-DATA_NAME = r'data_{:%Y%m%d%H%M%S}.json'
+DATA_PATH = Path.home() / "Documents" / "data"
+DATA_NAME = r'{0:%Y%m%d}/data_{0:%Y%m%d%H%M%S}.json'
 LATESTDATA_PATH = DATA_PATH / "latestdata.json"
 
 
@@ -57,6 +57,7 @@ class PoolStatus:
         with the name "latestdata".
         """
         datafile = DATA_PATH / DATA_NAME.format(self.timestamp)
+        datafile.parent.mkdir(parents=True, exist_ok=True)
         datafile.write_text(dumps(self.__dict__))
         if latest:
             if LATESTDATA_PATH.is_symlink():
