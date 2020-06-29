@@ -104,7 +104,7 @@ def control_pool(status):
     if status.pump['status'] == True:
         status.pump['runtime'] += status.timestamp - prev_timestamp
     # update pump status
-    status.pump['target_runtime'] = pumptime(status.temperature['water'])
+    status.pump['target_runtime'] = pumptime(status.max_temperature['water'])
     runtime = status.pump['target_runtime'] - status.pump['runtime']
     # load manual pool triggers:
     manual_control = load_manual_control(status.timestamp)
