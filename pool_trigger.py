@@ -88,5 +88,5 @@ def argparser():
 
 if __name__ == "__main__":
     args = argparser().parse_args()
-    PoolTrigger(args.state == 'on', args.priority, args.hours).save()
+    PoolTrigger(args.state == 'on', args.priority, hours=args.hours).save()
     pprint(PoolTrigger.load())
