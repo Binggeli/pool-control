@@ -33,3 +33,10 @@ def pump_off():
     PoolTrigger(False, 100, minutes=5).save()
     run_pump(False)
     return pool_status_json()
+
+@app.route('/chemie')
+def chemie():
+    PoolTrigger(True, 50, hours=12).save()
+    run_pump(True)
+    return pool_status_json()
+
