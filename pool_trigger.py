@@ -74,5 +74,18 @@ class PoolTrigger:
         return obj
 
 
+def argparser():
+    """Create an argument parser for the command line."""
+    parser = ArgumentParser(description='Change pump state based on arguments and sensors.')
+    parser.add_argument('state', choices=['on', 'off'],
+                        help='Trigger the switch to this state.')
+    parser.add_argument('hours', type=int,
+                        help='Trigger the switch for this number of hours.')
+    parser.add_argument('-p', '--priority', type=int, default=1,
+                        help='Priority of this trigger.')
+    return parser
+
 if __name__ == "__main__":
+    args = argparser().parse_args()
+    PoolTrigger(args.state == 'on', args.priority, args.hours).save()
     pprint(PoolTrigger.load())
