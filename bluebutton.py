@@ -5,6 +5,7 @@ import time
 from asyncore import file_dispatcher, loop
 from evdev import list_devices, InputDevice, ecodes
 from pump import run_pump
+from pool_trigger import PoolTrigger
 
 BUTTON = "b8:27:eb:ad:f4:81"
 
@@ -30,10 +31,10 @@ class InputDeviceDispatcher(file_dispatcher):
         for event in self.recv():
             if event.type == ecodes.EV_KEY:
                 if event.code == 115 and event.value == 1:
-                    PoolTrigger(True, 200, 30).save()
+                    PoolTrigger(True, 200, minutes=30).save()
                     run_pump(True)
                 if event.code == 28 and event.value == 1:
-                    PoolTrigger(False, 200, 30).save()
+                    PoolTrigger(False, 200, minutes=30).save()
                     run_pump(False)
                 print(repr(event))
 
