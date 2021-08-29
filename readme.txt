@@ -104,3 +104,12 @@ Install event handler for bluetooth button:
   - sudo systemctl start bluebutton
 - enable autostart of service:
   - sudo systemctl enable bluebutton
+
+Install data sender for mosquitto:
+- copy service description to systemd directory:
+  - sudo cp pool_send.service /lib/systemd/system
+- start service:
+  - sudo systemctl start pool_send
+- enable autostart of service:
+  - sudo systemctl enable pool_send
+

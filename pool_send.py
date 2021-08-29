@@ -9,8 +9,11 @@ client.loop_start()
 
 while True:
     try:
-        client.publish("pool/sensors/temperature/water", pd.temperature(pd.POOL_TEMP_SENSOR), qos=2)
+        client.publish("sensors/pool/temperature/water", pd.temperature(pd.POOL_TEMP_SENSOR), qos=2)
+        client.publish("sensors/pool/temperature/surface", pd.temperature(pd.SURFACE_TEMP_SENSOR), qos=2)
+        client.publish("sensors/pool/temperature/air", pd.temperature(pd.AIR_TEMP_SENSOR), qos=2)
     except KeyboardInterrupt:
         client.loop_stop()
         exit(0)
     sleep(60)
+
