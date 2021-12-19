@@ -13,7 +13,20 @@ class PoolTrigger:
     """Contains triggering information for the pool.
 
     Objects of this class contain triggering information for the pool, which
-    are normally set manually to override the automated pool control.
+    are set by the automated pool control but can also be set manually to
+    override the automation.
+
+    A trigger is set by passing the expected state of the pump (bool for on
+    or off), the priority of the trigger (int, the bigger the higher the
+    priority), the starttime (datetime defaulting to now), the runtime
+    (specified in seconds, minutes, hours, days or weeks) and the stoptime
+    (datetime defaulting to now plus runtime). If a stoptime is specified the
+    pump will be run as late as possible to get the specified runtime.
+
+    Examples:
+    - PoolTrigger(True, 100, hours=12): runs the pump for the next 12 hours
+    - PoolTrigger(True, 100, hours=12, next_time(hour=6)): runs the pump for
+        12 hours until next time when it is 6am. 
 
     This class implements methods to save objects to json files and load them
     again. As some attributes are datetime objects, which are loaded as strings

@@ -1,7 +1,7 @@
 from pprint import pprint
 from datetime import datetime, timedelta
 from pathlib import Path
-from jsondt import dumps, loads
+from jsondt import dumps, loads, JSONDecodeError
 
 import pool_data as pd
 
@@ -70,7 +70,7 @@ class PoolStatus:
         "Return the latest data object loaded from the json file."
         try:
             data = loads(LATESTDATA_PATH.read_text())
-        except FileNotFoundError:
+        except (FileNotFoundError, JSONDecodeError):
             return cls().update()
         else:
             obj = cls()
