@@ -143,4 +143,5 @@ if __name__ == "__main__":
     handler.setLevel(logging.DEBUG)
     handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
     LOGGER.addHandler(handler)
+    LOGGER.setLevel(logging.DEBUG)
     main()
