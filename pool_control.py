@@ -31,6 +31,7 @@ The manual control can be taken with different priorities:
         change status for 8 hours (after adding chemicals)
 """
 
+from time import sleep
 from datetime import datetime, time, timedelta
 from pathlib import Path
 from pprint import pprint
@@ -109,9 +110,13 @@ def control_pool(status):
     # load manual pool triggers:
     manual_control = load_manual_control(status.timestamp)
     if not manual_control is None:
+        LOGGER.debug('Running pump based on manual trigger: %s', manual_control)
         run_pump(manual_control)
-    elif (status.timestamp > next_time(status.timestamp, hour=6) - runtime or
-          status.light > LIGHT_THRESHOLD[status.pump['status']]):
+    elif status.light > LIGHT_THRESHOLD[status.pump['status']]:
+        LOGGER.debug('Running pump due to sunlight %s', status.light)
+        run_pump(True)
+    elif status.timestamp > next_time(status.timestamp, hour=6) - runtime:
+        LOGGER.debug('Running pump to reach remaining target runtime %s', runtime)
         run_pump(True)
     else:
         run_pump(False)
@@ -126,14 +131,16 @@ def main():
     try:
         while True:
             status = control_pool(status)
+            sleep(10)
     except Exception as exception:
         LOGGER.exception('Exception in main loop of pool control at %s: %s', datetime.now(), exception)
         return
 
 
 if __name__ == "__main__":
-    LOGGER.addHandler(
-        logging.handlers.TimedRotatingFileHandler('/var/log/pool/control.log',
-                                                  when='midnight', atTime=time(6)))
-    LOGGER.setLevel(logging.DEBUG)
+    handler = logging.handlers.TimedRotatingFileHandler('/var/log/pool/control.log',
+                                                        when='midnight', atTime=time(6))
+    handler.setLevel(logging.DEBUG)
+    handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+    LOGGER.addHandler(handler)
     main()
