@@ -82,6 +82,12 @@ def gpu_temperature():
               stdout=PIPE, universal_newlines=True).stdout
     return float(out[5:-3])
 
+def throttled():
+    "Return the throttling bits of the Raspberry Pi."
+    out = run(['/opt/vc/bin/vcgencmd', 'get_throttled'],
+              stdout=PIPE, universal_newlines=True).stdout
+    return int(out[10:], 16)
+
 def status_dict():
     "Return dict with current data for the pool."
     return {'temperature':
@@ -109,3 +115,5 @@ if __name__ == "__main__":
     print('Pump status: ', pump_status())
     print('CPU temperature: ', repr(cpu_temperature()))
     print('GPU temperature: ', repr(gpu_temperature()))
+    print('Throttled: ', throttled())
+

@@ -16,6 +16,7 @@ while True:
         client.publish("sensors/pool/temperature/gpu", pd.gpu_temperature(), qos=2)
         client.publish("sensors/pool/light", pd.light_intensity(), qos=2)
         client.publish("sensors/pool/pump", pd.pump_status(), qos=2)
+        client.publish("sensors/pool/throttled", pd.throttled(), qos=2)
     except KeyboardInterrupt:
         client.loop_stop()
         exit(0)
