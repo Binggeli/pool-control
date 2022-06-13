@@ -88,6 +88,12 @@ def throttled():
               stdout=PIPE, universal_newlines=True).stdout
     return int(out[10:], 16)
 
+def uptime():
+    "Return the uptime in seconds."
+    with open('/proc/uptime', 'r') as f:
+        uptime_seconds = float(f.readline().split()[0])
+    return uptime_seconds
+
 def status_dict():
     "Return dict with current data for the pool."
     return {'temperature':
@@ -116,4 +122,4 @@ if __name__ == "__main__":
     print('CPU temperature: ', repr(cpu_temperature()))
     print('GPU temperature: ', repr(gpu_temperature()))
     print('Throttled: ', throttled())
-
+    print('Uptime: ', uptime())
