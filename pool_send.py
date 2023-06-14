@@ -7,6 +7,16 @@ client = mqtt.Client("pool_data")
 client.connect("localhost")
 client.loop_start()
 
+# add discovery messages for Home Assistant
+config = """
+{"device_class": "temperature",
+ "name": "Wassertemperatur",
+ "state_topic": "sensors/pool/temperature/water",
+ "value_template": "{{ value }}",
+ "unit_of_measurement": "°C"}
+"""
+client.publish("homeassistant/sensor/pool/water/config", config, qos=2, retain=True)
+
 while True:
     try:
         client.publish("sensors/pool/temperature/water", pd.temperature(pd.POOL_TEMP_SENSOR), qos=2)
