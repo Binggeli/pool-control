@@ -7,15 +7,48 @@ client = mqtt.Client("pool_data")
 client.connect("localhost")
 client.loop_start()
 
+with open('/sys/class/net/wlan0/address', 'rt') as f:
+    mac = f.read().strip()
+if len(mac) != 17 or mac.count(':') != 5:
+    mac = mac.replace('-', '')
+    mac = mac.replace('.', '')
+    if len(mac) == 12:
+        mac = ':'.join(mac.lower()[i:i+2] for i in range(0, 12, 2))
+print('Mac address: {0}'.format(mac))
+
 # add discovery messages for Home Assistant
 config = """
-{"device_class": "temperature",
- "name": "Wassertemperatur",
- "state_topic": "sensors/pool/temperature/water",
- "value_template": "{{ value }}",
- "unit_of_measurement": "°C"}
+{{"unique_id": "{0}_{1}",
+  "device_class": "temperature",
+  "name": "{2}",
+  "state_topic": "sensors/pool/temperature/{1}",
+  "value_template": "{{{{ value }}}}",
+  "unit_of_measurement": "°C"}}
 """
-client.publish("homeassistant/sensor/pool/water/config", config, qos=2, retain=True)
+
+client.publish("homeassistant/sensor/pool/water/config",
+    config.format(mac, 'water', 'Wassertemperatur'),
+    qos=2, retain=True)
+client.publish("homeassistant/sensor/pool/air/config",
+    config.format(mac, 'air', 'Aussentemperatur'),
+    qos=2, retain=True)
+client.publish("homeassistant/sensor/pool/surface/config",
+    config.format(mac, 'surface', 'Oberflächentemperatur'),
+    qos=2, retain=True)
+
+# add discovery messages for Home Assistant
+config = """
+{{"unique_id": "{0}_{1}",
+  "device_class": "illuminance",
+  "name": "{2}",
+  "state_topic": "sensors/pool/{1}",
+  "value_template": "{{{{ value }}}}",
+  "unit_of_measurement": "lx"}}
+"""
+
+client.publish("homeassistant/sensor/pool/light/config",
+    config.format(mac, 'light', 'Sonneneinstrahlung'),
+    qos=2, retain=True)
 
 while True:
     try:
