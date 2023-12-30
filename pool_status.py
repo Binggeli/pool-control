@@ -27,6 +27,7 @@ class PoolStatus:
         self.light = 0
         self.pump = {'status': None,
                      'runtime': timedelta(hours=0)}
+        self.wifiquality = {}
 
     def __str__(self):
         return 'PoolStatus as of {0}'.format(self.timestamp.strftime(DATE_FORMAT))
@@ -46,6 +47,7 @@ class PoolStatus:
         self.pump['status'] = pd.pump_status()
         self.pump['pressure'] = pd.pressure(pd.FILTER_PRESSURE_CHANNEL)
         self.pump['power'] = pd.powerconsumption(pd.POWER_CONSUMPTION_CHANNEL)
+        self.wifiquality = pd.wifiquality()
         self.timestamp = datetime.now()
         return self
 

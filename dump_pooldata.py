@@ -37,4 +37,4 @@ with open(csv_name, 'a') as f:
                   ps.temperature['cpu'],
                   ps.temperature['gpu'],
                   ps.wifiquality['current'],
-                  ps.wifiquality['max'])
+                  ps.wifiquality['max']])
