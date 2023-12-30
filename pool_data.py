@@ -94,6 +94,13 @@ def uptime():
         uptime_seconds = float(f.readline().split()[0])
     return uptime_seconds
 
+def wifiquality():
+    "Return the signal quality of the wifi link."
+    out = run(['iwconfig', 'wlan'],
+              stdout=PIPE, universal_newlines=True).stdout
+    return dict(zip(('current', 'max'),
+                    re.search('Link Quality=([0-9]+)/([0-9]+) ', out).groups()))
+
 def status_dict():
     "Return dict with current data for the pool."
     return {'temperature':
@@ -108,6 +115,7 @@ def status_dict():
                  'power': powerconsumption(POWER_CONSUMPTION_CHANNEL)},
             'relay':
                 {'pump': pump_status()},
+            'wifiquality': wifiquality(),
             'timestamp': '{:%d.%m.%Y %H:%M:%S}'.format(datetime.now())}
 
 
@@ -123,3 +131,4 @@ if __name__ == "__main__":
     print('GPU temperature: ', repr(gpu_temperature()))
     print('Throttled: ', throttled())
     print('Uptime: ', uptime())
+    print('Wifi quality:', wifiquality())
