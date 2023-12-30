@@ -1,3 +1,4 @@
+import re
 from time import sleep
 from datetime import datetime
 from pathlib import Path
@@ -96,7 +97,7 @@ def uptime():
 
 def wifiquality():
     "Return the signal quality of the wifi link."
-    out = run(['iwconfig', 'wlan'],
+    out = run(['iwconfig', 'wlan0'],
               stdout=PIPE, universal_newlines=True).stdout
     return dict(zip(('current', 'max'),
                     re.search('Link Quality=([0-9]+)/([0-9]+) ', out).groups()))
