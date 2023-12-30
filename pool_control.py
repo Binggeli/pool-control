@@ -43,7 +43,7 @@ from pool_trigger import PoolTrigger
 from pump import run_pump
 import pool_data as pd
 
-LIGHT_THRESHOLD = {False: 25000, True: 15000}
+LIGHT_THRESHOLD = {False: 10000, True: 5000}
 
 LOGGER = logging.getLogger(__name__)
 
