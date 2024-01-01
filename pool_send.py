@@ -50,6 +50,20 @@ client.publish("homeassistant/sensor/pool/light/config",
     config.format(mac, 'light', 'Sonneneinstrahlung'),
     qos=2, retain=True)
 
+# add discovery messages for Home Assistant
+config = """
+{{"unique_id": "{0}_{1}",
+  "device_class": "signal_level",
+  "name": "{2}",
+  "state_topic": "sensors/pool/{1}",
+  "value_template": "{{{{ value }}}}",
+  "unit_of_measurement": "dBm"}}
+"""
+
+client.publish("homeassistant/sensor/pool/wifi_signal_level/config",
+    config.format(mac, 'wifi_signal_level', 'Wifi Signal Level'),
+    qos=2, retain=True)
+
 while True:
     try:
         client.publish("sensors/pool/temperature/water", pd.temperature(pd.POOL_TEMP_SENSOR), qos=2)
@@ -61,6 +75,7 @@ while True:
         client.publish("sensors/pool/pump", pd.pump_status(), qos=2)
         client.publish("sensors/pool/throttled", pd.throttled(), qos=2)
         client.publish("sensors/pool/uptime", pd.uptime(), qos=2)
+        client.publish("sensors/pool/wifi_signal_level", pd.wifi_signal_level(), qos=2)
     except KeyboardInterrupt:
         client.loop_stop()
         exit(0)

@@ -19,8 +19,7 @@ if not path.exists(csv_name):
                       'Pump Status',
                       'CPU Temperature',
                       'GPU Temperature',
-                      'Wifi Quality',
-                      'Wifi Max'])
+                      'Wifi Signal Level'])
 
 ps = PoolStatus.load()
 
@@ -36,5 +35,4 @@ with open(csv_name, 'a') as f:
                   ps.pump['status'],
                   ps.temperature['cpu'],
                   ps.temperature['gpu'],
-                  ps.wifiquality['current'],
-                  ps.wifiquality['max']])
+                  ps.wifi_signal_level])
