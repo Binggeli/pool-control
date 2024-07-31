@@ -1,0 +1,14 @@
+[Unit]
+Description=WIFI Supervisor Service
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=3
+User=pi
+ExecStart=/usr/bin/python3 /home/pi/bin/wifi_supervisor.py
+
+[Install]
+WantedBy=multi-user.target
