@@ -1,3 +1,4 @@
+import re
 from time import sleep
 from datetime import datetime
 from pathlib import Path
@@ -94,6 +95,16 @@ def uptime():
         uptime_seconds = float(f.readline().split()[0])
     return uptime_seconds
 
+def wifi_signal_level():
+    "Return the signal level of the wifi link."
+    out = run(['/sbin/iwconfig', 'wlan0'],
+              stdout=PIPE, universal_newlines=True).stdout
+    m = re.search('Signal level=(-?[0-9]+) dBm', out)
+    if m:
+        return m.group(1)
+    else:
+        return None
+
 def status_dict():
     "Return dict with current data for the pool."
     return {'temperature':
@@ -108,6 +119,7 @@ def status_dict():
                  'power': powerconsumption(POWER_CONSUMPTION_CHANNEL)},
             'relay':
                 {'pump': pump_status()},
+            'wifi_signal_level': wifi_signal_level(),
             'timestamp': '{:%d.%m.%Y %H:%M:%S}'.format(datetime.now())}
 
 
@@ -123,3 +135,4 @@ if __name__ == "__main__":
     print('GPU temperature: ', repr(gpu_temperature()))
     print('Throttled: ', throttled())
     print('Uptime: ', uptime())
+    print('Wifi Signal Level:', wifi_signal_level())

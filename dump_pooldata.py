@@ -18,20 +18,26 @@ if not path.exists(csv_name):
                       'Power Consumption',
                       'Pump Status',
                       'CPU Temperature',
-                      'GPU Temperature'])
+                      'GPU Temperature',
+                      'Wifi Signal Level'])
 
-ps = PoolStatus.load()
+try:
+    ps = PoolStatus.load()
 
-with open(csv_name, 'a') as f:
-    csv = writer(f)
-    csv.writerow([datetime.now().isoformat(),
-                  ps.temperature['water'],
-                  ps.temperature['surface'],
-                  ps.temperature['air'],
-                  ps.light,
-                  ps.pump['pressure'],
-                  ps.pump['power'],
-                  ps.pump['status'],
-                  ps.temperature['cpu'],
-                  ps.temperature['gpu']
-                 ])
+    with open(csv_name, 'a') as f:
+        csv = writer(f)
+        csv.writerow([datetime.now().isoformat(),
+                      ps.temperature['water'],
+                      ps.temperature['surface'],
+                      ps.temperature['air'],
+                      ps.light,
+                      ps.pump['pressure'],
+                      ps.pump['power'],
+                      ps.pump['status'],
+                      ps.temperature['cpu'],
+                      ps.temperature['gpu'],
+                      ps.wifi_signal_level])
+except Exception as exception:
+    with open('/home/pi/dump.log', 'a') as g:
+        g.write('Exception during dump: {0}'.format(exception))
+

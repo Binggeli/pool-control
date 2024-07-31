@@ -113,8 +113,3 @@ Install data sender for mosquitto:
 - enable autostart of service:
   - sudo systemctl enable pool_send
 
-Split poolcontrol into a series of processes:
-- pump_control: listen on mqtt for trigger commands and switch the pump accordingly. Measure runtime and count the switches, publish both to mqtt
-- light_control: listen on mqtt for light sensor and send trigger command for 15 min if above threshold (10000)
-- temperature_control: listen on mqtt for max temperature, calculate the target runtime and trigger the pump early enough. Publish the target runtime to mqtt.
-
