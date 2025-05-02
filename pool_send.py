@@ -63,6 +63,10 @@ client.publish("homeassistant/binary_sensor/pool/pump/config",
     config.format(mac, 'pump', 'Pumpe'),
     qos=2, retain=True)
 
+client.publish("homeassistant/binary_sensor/pool/bulb/config",
+    config.format(mac, 'bulb', 'UV-Lampe'),
+    qos=2, retain=True)
+
 # add discovery messages for Home Assistant
 config = """
 {{"unique_id": "{0}_{1}",
@@ -89,6 +93,7 @@ while True:
         client.publish("sensors/pool/pump", pd.pump_status(), qos=2)
         client.publish("sensors/pool/throttled", pd.throttled(), qos=2)
         client.publish("sensors/pool/uptime", pd.uptime(), qos=2)
+        client.publish("sensors/pool/bulb", pd.bulb_status(), qos=2)
         client.publish("sensors/pool/wifi_signal_level", pd.wifi_signal_level(), qos=2)
     except KeyboardInterrupt:
         client.loop_stop()
