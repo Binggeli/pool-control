@@ -74,7 +74,7 @@ def pump_status():
 
 def bulb_status():
     "Return the status of the UV bulb"
-    return run(['gpio', '-g', 'read', BULB_SWITCH_CHANNEL]),
+    return run(['gpio', '-g', 'read', BULB_SWITCH_CHANNEL],
                stdout=PIPE).stdout.strip() == b'1'
 
 def cpu_temperature():
