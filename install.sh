@@ -7,8 +7,7 @@ rsync -rtv --del bin/ ~/bin/
 cd svc
 for svc in *.service
 do
-  cp "${svc}" /lib/systemd/system
-  svc="${svc%.service}"
-  systemctl start "${svc}"
-  systemctl enable "${svc}"
+  sudo cp "${svc}" /lib/systemd/system
+  sudo systemctl start "${svc%.service}"
+  sudo systemctl enable "${svc%.service}"
 done
